@@ -3,6 +3,7 @@ package com.exam.application;
 import com.exam.application.dto.DTOs.CalificacionDTO;
 import com.exam.application.dto.DTOs.ExamAttemptDTO;
 import com.exam.domain.model.ExamAttempt;
+import com.exam.domain.model.Question;
 import com.exam.domain.repository.Repositories.ExamAttemptRepository;
 import com.exam.domain.repository.Repositories.QuestionBankRepository;
 import com.exam.domain.service.AttemptManager;
