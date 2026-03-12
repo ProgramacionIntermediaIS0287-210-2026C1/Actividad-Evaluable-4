@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor de Diagrama de Clases - Mermaid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importación de Mermaid.js desde CDN confiable -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+            class: { useMaxWidth: true }
+        });
+    </script>
+    <style>
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        /* Ajuste para que el SVG sea responsivo */
+        .mermaid svg {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800">Diagrama de Clases: Sistema de Exámenes</h1>
+            <p class="text-gray-600 mt-2">Visualización basada en arquitectura hexagonal y DDD</p>
+        </header>
+
+        <main class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Contenedor del Diagrama -->
+            <div class="p-6 overflow-x-auto">
+                <pre class="mermaid">
+classDiagram
+    direction TB
+
+    %% --- Capa de Dominio (Domain) ---
+    namespace Domain_Model {
+        class Question {
+            &lt;&lt;abstract&gt;&gt;
+            #QuestionId id
+            #String text
+            #AnswerText correctAnswer
+            +isCorrect(AnswerText studentAnswer)* boolean
+            +displayFormat()* void
+        }
+
+        class SingleChoiceQuestion {
+            -List~String~ options
+            +isCorrect(AnswerText studentAnswer) boolean
+            +displayFormat() void
+        }
+
+        class TrueFalseQuestion {
+            +isCorrect(AnswerText studentAnswer) boolean
+            +displayFormat() void
+        }
+
+        class FillBlankQuestion {
+            +isCorrect(AnswerText studentAnswer) boolean
+            +displayFormat() void
+        }
+
+        class MultipleChoiceQuestion {
+            -List~String~ options
+            +isCorrect(AnswerText studentAnswer) boolean
+            +displayFormat() void
+        }
+
+        class ExamAttempt {
+            -StudentId studentId
+            -List~Question~ questions
+            -Map~QuestionId, AnswerText~ answers
+            -boolean isFinished
+            -Calificacion result
+            +responder(QuestionId qId, AnswerText answer) void
+            +finalizar(Calificacion calificacion) void
+            +estaFinalizado() boolean
+        }
+    }
+
+    namespace Domain_Services {
+        class AttemptManager {
+            -ExamAttemptRepository repository
+            +verificarIntentoActivo(StudentId studentId) void
+        }
+
+        class GradingService {
+            +calificar(ExamAttempt attempt) Calificacion
+        }
+    }
+
+    namespace Domain_Repository_Interfaces {
+        class ExamAttemptRepository {
+            &lt;&lt;interface&gt;&gt;
+            +findActiveByStudent(StudentId studentId) Optional~ExamAttempt~
+            +save(ExamAttempt attempt) void
+        }
+
+        class QuestionBankRepository {
+            &lt;&lt;interface&gt;&gt;
+            +findAll() List~Question~
+        }
+    }
+
+    namespace Domain_ValueObjects {
+        class StudentId { &lt;&lt;record&gt;&gt; +String value }
+        class QuestionId { &lt;&lt;record&gt;&gt; +String value }
+        class AnswerText { &lt;&lt;record&gt;&gt; +String value }
+        class Calificacion { &lt;&lt;record&gt;&gt; +int puntaje, +int total }
+    }
+
+    %% --- Capa de Aplicación (Application) ---
+    namespace Application {
+        class ExamApplicationService {
+            -QuestionBankRepository questionRepo
+            -ExamAttemptRepository attemptRepo
+            -AttemptManager attemptManager
+            -GradingService gradingService
+            +iniciarExamen(StudentId studentId) ExamAttemptDTO
+            +responderPregunta(StudentId studentId, QuestionId qId, AnswerText answer) void
+            +finalizarExamen(StudentId studentId) CalificacionDTO
+        }
+
+        class ExamAttemptDTO { &lt;&lt;record&gt;&gt; +StudentId studentId, +List~Question~ questions }
+        class CalificacionDTO { &lt;&lt;record&gt;&gt; +int puntaje, +int total }
+    }
+
+    %% --- Capa de Infraestructura (Infrastructure) ---
+    namespace Infrastructure {
+        class CsvQuestionBankRepository {
+            -String filePath
+            +findAll() List~Question~
+            -parseQuestion(String line, int idStr) Question
+        }
+
+        class InMemoryExamAttemptRepository {
+            -Map~StudentId, ExamAttempt~ db
+            +findActiveByStudent(StudentId studentId) Optional~ExamAttempt~
+            +save(ExamAttempt attempt) void
+        }
+    }
+
+    namespace Presentation {
+        class ConsoleUI {
+            -ExamApplicationService appService
+            +start() void
+        }
+
+        class SwingUI {
+            -ExamApplicationService appService
+            +start() void
+        }
+    }
+
+    %% --- Relaciones ---
+    Question <|-- SingleChoiceQuestion
+    Question <|-- TrueFalseQuestion
+    Question <|-- FillBlankQuestion
+    Question <|-- MultipleChoiceQuestion
+
+    ExamAttempt "1" *-- "*" Question : contiene
+    ExamAttempt "1" *-- "1" StudentId : pertenece a
+    ExamAttempt "1" *-- "1" Calificacion : resultado
+
+    ExamAttemptRepository <.. InMemoryExamAttemptRepository : implementa
+    QuestionBankRepository <.. CsvQuestionBankRepository : implementa
+
+    AttemptManager --> ExamAttemptRepository : utiliza
+    ExamApplicationService --> QuestionBankRepository : utiliza
+    ExamApplicationService --> ExamAttemptRepository : utiliza
+    ExamApplicationService --> AttemptManager : utiliza
+    ExamApplicationService --> GradingService : utiliza
+
+    ConsoleUI --> ExamApplicationService : orquesta
+    SwingUI --> ExamApplicationService : orquesta
+
+    GradingService ..> ExamAttempt : evalúa
+
+    ExamApplicationService ..> ExamAttemptDTO : devuelve
+    ExamApplicationService ..> CalificacionDTO : devuelve
+                </pre>
+            </div>
+        </main>
+
+        <footer class="mt-8 text-center text-sm text-gray-500">
+            <p>Generado con Mermaid.js v10. Renderizado automático de sintaxis de clase.</p>
+        </footer>
+    </div>
+</body>
+
+</html>
