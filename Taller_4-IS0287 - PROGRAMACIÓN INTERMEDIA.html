@@ -6,50 +6,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visor de Diagrama de Clases - Mermaid</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importación de Mermaid.js desde CDN confiable -->
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({
-            startOnLoad: true,
-            theme: 'neutral',
-            securityLevel: 'loose',
-            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
-            class: { useMaxWidth: true }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
     <style>
-        .mermaid {
-            display: flex;
-            justify-content: center;
-            background-color: white;
-            padding: 2rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9;
         }
 
-        /* Ajuste para que el SVG sea responsivo */
-        .mermaid svg {
-            max-width: 100% !important;
-            height: auto !important;
+        /* Maximización del área de visualización */
+        #mermaid-viewer-wrapper {
+            height: 85vh;
+            /* Aumento de altura para mayor visibilidad */
+            background-color: white;
+            background-image: radial-gradient(#cbd5e1 0.75px, transparent 0.75px);
+            background-size: 20px 20px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.75rem;
+            cursor: grab;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        #mermaid-viewer-wrapper:active {
+            cursor: grabbing;
+        }
+
+        #diagram-target {
+            width: 100%;
+            height: 100%;
+            display: block;
+            /* Cambio a block para que el zoom ocupe todo el espacio */
+        }
+
+        .zoom-controls {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .zoom-btn {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #475569;
+        }
+
+        .zoom-btn:hover {
+            background: #f8fafc;
+            border-color: #3b82f6;
+            color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .zoom-btn svg {
+            width: 24px !important;
+            height: 24px !important;
+            pointer-events: none;
+        }
+
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #334155;
+            border: 1px solid #e2e8f0;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .mermaid {
+            visibility: hidden;
+        }
+
+        .mermaid[data-processed="true"] {
+            visibility: visible;
         }
     </style>
+
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'neutral',
+            securityLevel: 'loose',
+            class: { useMaxWidth: false }
+        });
+
+        const initDiagram = async () => {
+            const target = document.getElementById('diagram-target');
+
+            try {
+                // Iniciar renderizado asíncrono
+                await mermaid.run();
+
+                // Pequeña pausa para asegurar que el SVG se inyecte correctamente
+                setTimeout(() => {
+                    const svg = target.querySelector('svg');
+                    if (svg) {
+                        // Limpieza total de estilos inline de Mermaid
+                        svg.removeAttribute('style');
+                        svg.removeAttribute('width');
+                        svg.removeAttribute('height');
+                        svg.style.width = '100%';
+                        svg.style.height = '100%';
+
+                        const pz = svgPanZoom(svg, {
+                            zoomEnabled: true,
+                            controlIconsEnabled: false,
+                            fit: true,
+                            center: true,
+                            minZoom: 0.01,
+                            maxZoom: 50,
+                            zoomScaleSensitivity: 0.5
+                        });
+
+                        // Ajuste inicial para maximizar la vista del diagrama
+                        pz.resize();
+                        pz.fit();
+                        pz.center();
+
+                        window.pz = pz;
+                    }
+                }, 300);
+            } catch (err) {
+                console.error("Fallo en inicialización:", err);
+            }
+        };
+
+        window.addEventListener('load', initDiagram);
+    </script>
 </head>
 
-<body class="bg-gray-100 min-h-screen p-4 md:p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800">Diagrama de Clases: Sistema de Exámenes</h1>
-            <p class="text-gray-600 mt-2">Visualización basada en arquitectura hexagonal y DDD</p>
+<body class="p-4 md:p-6">
+    <div class="max-w-[95%] mx-auto">
+        <header class="mb-6 flex flex-col items-center">
+            <h1 class="text-2xl font-bold text-slate-900">Visor de Arquitectura: Sistema de Exámenes</h1>
+            <div class="h-1 w-20 bg-blue-500 rounded mt-2"></div>
         </header>
 
-        <main class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <!-- Contenedor del Diagrama -->
-            <div class="p-6 overflow-x-auto">
-                <pre class="mermaid">
+        <main class="relative">
+            <div id="mermaid-viewer-wrapper">
+                <div class="info-panel">
+                    <span class="font-semibold text-blue-600">Navegación Activa:</span> 🖱️ Rueda para Zoom · 🖐️ Click y Arrastre para Mover
+                </div>
+
+                <div class="zoom-controls">
+                    <button onclick="if(window.pz) window.pz.zoomIn()" class="zoom-btn" title="Aumentar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <button onclick="if(window.pz) window.pz.zoomOut()" class="zoom-btn" title="Disminuir">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </button>
+                    <button onclick="if(window.pz) { window.pz.reset(); window.pz.fit(); window.pz.center(); }" class="zoom-btn" title="Centrar Diagrama">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h6v6"></path>
+                            <path d="M9 21H3v-6"></path>
+                            <path d="M21 3l-7 7"></path>
+                            <path d="M3 21l7-7"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div id="diagram-target">
+                    <pre class="mermaid">
 classDiagram
     direction TB
 
-    %% --- Capa de Dominio (Domain) ---
     namespace Domain_Model {
         class Question {
             &lt;&lt;abstract&gt;&gt;
@@ -125,7 +276,6 @@ classDiagram
         class Calificacion { &lt;&lt;record&gt;&gt; +int puntaje, +int total }
     }
 
-    %% --- Capa de Aplicación (Application) ---
     namespace Application {
         class ExamApplicationService {
             -QuestionBankRepository questionRepo
@@ -141,7 +291,6 @@ classDiagram
         class CalificacionDTO { &lt;&lt;record&gt;&gt; +int puntaje, +int total }
     }
 
-    %% --- Capa de Infraestructura (Infrastructure) ---
     namespace Infrastructure {
         class CsvQuestionBankRepository {
             -String filePath
@@ -168,7 +317,6 @@ classDiagram
         }
     }
 
-    %% --- Relaciones ---
     Question <|-- SingleChoiceQuestion
     Question <|-- TrueFalseQuestion
     Question <|-- FillBlankQuestion
@@ -194,12 +342,14 @@ classDiagram
 
     ExamApplicationService ..> ExamAttemptDTO : devuelve
     ExamApplicationService ..> CalificacionDTO : devuelve
-                </pre>
+                    </pre>
+                </div>
             </div>
         </main>
 
-        <footer class="mt-8 text-center text-sm text-gray-500">
-            <p>Generado con Mermaid.js v10. Renderizado automático de sintaxis de clase.</p>
+        <footer class="mt-4 flex justify-between items-center text-slate-500 text-xs px-2">
+            <span>Esquema Técnico de Referencia</span>
+            <span>Motor: Mermaid v10 + PanZoom Engine</span>
         </footer>
     </div>
 </body>
