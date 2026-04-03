@@ -1,21 +1,12 @@
 package com.exam.infrastructure;
 
-import com.exam.domain.repository.repositories.*;
-import com.exam.domain.model.*;
-import com.exam.domain.vo.ValueObjects.*;
+import com.exam.domain.repository.ExamAttemptRepository;
+import com.exam.domain.model.ExamAttempt;
+import com.exam.domain.vo.ValueObjects.StudentId;
 import java.util.*;
 
-public class InMemoryExamAttemptRepository implements ExamAttemptRepository {
-
-    private final Map<String, ExamAttempt> db = new HashMap<>();
-
-    @Override
-    public Optional<ExamAttempt> findActiveByStudent(StudentId studentId) {
-        return Optional.ofNullable(db.get(studentId.value()));
-    }
-
-    @Override
-    public void save(ExamAttempt attempt) {
-        db.put(attempt.getStudentId().value(), attempt);
-    }
+public class InMemoryExamAttemptRepository implements ExamAttemptRepository{
+    private final Map<String,ExamAttempt> db=new HashMap<>();
+    public Optional<ExamAttempt> findActiveByStudent(StudentId id){ return Optional.ofNullable(db.get(id.value())); }
+    public void save(ExamAttempt attempt){ db.put(attempt.getStudentId().value(),attempt); }
 }

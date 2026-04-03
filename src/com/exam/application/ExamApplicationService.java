@@ -1,49 +1,37 @@
 package com.exam.application;
 
 import com.exam.domain.model.*;
-import com.exam.domain.repository.repositories.*;
+import com.exam.domain.repository.*;
 import com.exam.domain.service.*;
 import com.exam.domain.vo.ValueObjects.*;
-import com.exam.application.dto.DTOs.*;
-
-import java.util.*;
+import com.exam.application.dto.DTOs.CalificacionDTO;
+import java.util.List;
 
 public class ExamApplicationService {
 
-    private final QuestionBankRepository questionRepo;
-    private final ExamAttemptRepository attemptRepo;
-    private final AttemptManager attemptManager;
-    private final GradingService gradingService;
+    private final QuestionBankRepository qRepo;
+    private final ExamAttemptRepository aRepo;
+    private final AttemptManager manager;
+    private final GradingService grading;
 
-    public ExamApplicationService(
-            QuestionBankRepository qRepo,
-            ExamAttemptRepository aRepo,
-            AttemptManager manager,
-            GradingService grading) {
-
-        this.questionRepo = qRepo;
-        this.attemptRepo = aRepo;
-        this.attemptManager = manager;
-        this.gradingService = grading;
+    public ExamApplicationService(QuestionBankRepository q,ExamAttemptRepository a,AttemptManager m,GradingService g){
+        qRepo=q; aRepo=a; manager=m; grading=g;
     }
 
-    public ExamAttempt iniciarExamen(String student) {
-        StudentId id = new StudentId(student);
-        attemptManager.verificarIntentoActivo(id);
-        List<Question> questions = questionRepo.findAll();
-        ExamAttempt attempt = new ExamAttempt(id, questions);
-        attemptRepo.save(attempt);
-        return attempt;
+    public ExamAttempt iniciarExamen(String student){
+        StudentId id=new StudentId(student);
+        manager.verificarIntentoActivo(id);
+        ExamAttempt attempt=new ExamAttempt(id,qRepo.findAll());
+        aRepo.save(attempt); return attempt;
     }
 
-    public void responderPregunta(ExamAttempt attempt, String qId, String answer) {
-        attempt.responder(new QuestionId(qId), new AnswerText(answer));
+    public void responderPregunta(ExamAttempt attempt,String qId,String ans){
+        attempt.responder(new QuestionId(qId),new AnswerText(ans));
     }
 
-    public CalificacionDTO finalizarExamen(ExamAttempt attempt) {
-        Calificacion cal = gradingService.calificar(attempt);
-        attempt.finalizar(cal);
-        attemptRepo.save(attempt);
-        return new CalificacionDTO(cal.puntaje(), cal.total());
+    public CalificacionDTO finalizarExamen(ExamAttempt attempt){
+        var cal=grading.calificar(attempt);
+        attempt.finalizar(cal); aRepo.save(attempt);
+        return new CalificacionDTO(cal.puntaje(),cal.total());
     }
 }

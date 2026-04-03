@@ -7,27 +7,22 @@ public class ExamAttempt {
 
     private final StudentId studentId;
     private final List<Question> questions;
-    private final Map<QuestionId, AnswerText> answers = new HashMap<>();
-    private boolean finished = false;
+    private final Map<QuestionId,AnswerText> answers=new HashMap<>();
+    private boolean finished=false;
     private Calificacion result;
 
-    public ExamAttempt(StudentId studentId, List<Question> questions) {
-        this.studentId = studentId;
-        this.questions = questions;
+    public ExamAttempt(StudentId studentId,List<Question> questions){
+        this.studentId=studentId; this.questions=questions;
     }
 
-    public void responder(QuestionId qId, AnswerText answer) {
-        if (finished) throw new IllegalStateException("Examen finalizado");
-        answers.put(qId, answer);
+    public void responder(QuestionId qId,AnswerText ans){
+        if(finished) throw new IllegalStateException("Examen finalizado");
+        answers.put(qId,ans);
     }
 
-    public void finalizar(Calificacion calificacion) {
-        this.finished = true;
-        this.result = calificacion;
-    }
+    public void finalizar(Calificacion cal){ finished=true; result=cal; }
 
-    public boolean estaFinalizado() { return finished; }
-    public List<Question> getQuestions() { return questions; }
-    public Map<QuestionId, AnswerText> getAnswers() { return answers; }
-    public StudentId getStudentId() { return studentId; }
+    public List<Question> getQuestions(){ return questions; }
+    public Map<QuestionId,AnswerText> getAnswers(){ return answers; }
+    public StudentId getStudentId(){ return studentId; }
 }
