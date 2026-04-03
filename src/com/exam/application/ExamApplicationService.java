@@ -8,10 +8,10 @@ import java.util.List;
 
 public class ExamApplicationService {
 
-    private final domain.service.GradingService gradingService;
+    private final GradingService gradingService;
 
     public ExamApplicationService(){
-        this.gradingService = GradingService();
+        this.gradingService = new GradingService();
     }
 
     // inciar intento

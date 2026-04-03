@@ -2,22 +2,16 @@ package com.exam.domain.vo;
 
 public class ValueObjects {
 
-    public record StudentId (String value) {
-        public studentId {
-            if (value == null || value.isBlank()) {
-                throw new IllegalArgumentException("El ID del estudiente no puede estar vacio.");
-                
-            }
+    public record StudentId(String value) {
+        public StudentId {
+            if (value == null || value.isBlank())
+                throw new IllegalArgumentException("El ID del estudiante no puede estar vacío");
         }
-        
     }
 
-    public record QuestionId(String value) {
-    }
+    public record QuestionId(String value) { }
 
-    public record AnswerText(String value) {
-    }
+    public record AnswerText(String value) { }
 
-    public record Calificacion(int puntaje, int total) {
-    }
+    public record Calificacion(int puntaje, int total) { }
 }
