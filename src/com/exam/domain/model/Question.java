@@ -1,23 +1,26 @@
-import com.exam.domain.vo.ValueObjects.AnswerText;
+package com.exam.domain.model;
+
 import com.exam.domain.vo.ValueObjects.QuestionId;
 
-public abstract class Question {
-    protected final QuestionId id;
-    protected final String text;
-    protected final AnswerText correctAnswer;
+public class Question {
 
-    public Question( QuestionId id, String text, AnswerText correctAnswer){
-        this.id= id;
-        this.text= text;
-        this.correctAnswer= correctAnswer;
-    }
-    public QuestionId getId(){
-        return id;
-    }
-    public String getText(){
-        return text;
-    }
-    public abstract boolean isCorrect(AnswerText studentAnswer);
+    private final QuestionId id;
+    private final String text;
+    private final String correctAnswer;
+    private final QuestionTypes type;
 
-    public abstract void displayFormat();
+    public Question(QuestionId id, String text, String correctAnswer, QuestionTypes type) {
+        this.id = id;
+        this.text = text;
+        this.correctAnswer = correctAnswer;
+        this.type = type;
+    }
+
+    public QuestionId getId(){ return id; }
+    public String getText(){ return text; }
+    public QuestionTypes getType(){ return type; }
+
+    public boolean isCorrect(String answer){
+        return correctAnswer.equalsIgnoreCase(answer.trim());
+    }
 }

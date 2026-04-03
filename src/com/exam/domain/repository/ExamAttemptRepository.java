@@ -1,5 +1,4 @@
 package com.exam.domain.repository;
-
 import com.exam.domain.model.ExamAttempt;
 import com.exam.domain.vo.ValueObjects.StudentId;
 import java.util.Optional;

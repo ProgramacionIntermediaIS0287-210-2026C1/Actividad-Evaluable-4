@@ -1,17 +1,19 @@
 package com.exam.infrastructure;
 
-import com.exam.domain.repository.QuestionBankRepository;
 import com.exam.domain.model.*;
-import com.exam.domain.model.QuestionTypes.*;
-import com.exam.domain.vo.ValueObjects.*;
-import java.util.List;
+import com.exam.domain.repository.QuestionBankRepository;
+import com.exam.domain.vo.ValueObjects.QuestionId;
+import java.util.*;
 
-public class CsvQuestionBankRepository implements QuestionBankRepository{
+public class CsvQuestionBankRepository implements QuestionBankRepository {
+
     public List<Question> findAll(){
-        return List.of(
-            new TrueFalseQuestion(new QuestionId("1"),"Java es tipado fuerte",new AnswerText("true")),
-            new FillBlankQuestion(new QuestionId("2"),"Capital de Francia",new AnswerText("paris")),
-            new SingleChoiceQuestion(new QuestionId("3"),"2+2=?",List.of("3","4","5"),new AnswerText("4"))
-        );
+        List<Question> list = new ArrayList<>();
+
+        list.add(new Question(new QuestionId("1"), "Capital de Colombia", "Bogotá", QuestionTypes.SHORT_ANSWER));
+        list.add(new Question(new QuestionId("2"), "5 + 5 = ?", "10", QuestionTypes.SHORT_ANSWER));
+        list.add(new Question(new QuestionId("3"), "El cielo es azul (true/false)", "true", QuestionTypes.TRUE_FALSE));
+
+        return list;
     }
 }

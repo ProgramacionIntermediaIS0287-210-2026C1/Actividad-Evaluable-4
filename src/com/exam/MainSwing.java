@@ -1,18 +1,17 @@
-package com.exam.presentation;
+package com.exam;
 
-import com.exam.application.*;
-import com.exam.domain.service.*;
-import com.exam.infrastructure.*;
-import javax.swing.SwingUtilities;
+import com.exam.application.ExamService;
+import com.exam.infrastructure.CsvQuestionBankRepository;
+import com.exam.infrastructure.InMemoryExamAttemptRepository;
+import com.exam.ui.SwingUI;
 
 public class MainSwing {
-    public static void main(String[] args){
-        var repo=new InMemoryExamAttemptRepository();
-        var app=new ExamApplicationService(
+
+    public static void main(String[] args) {
+        ExamService service = new ExamService(
                 new CsvQuestionBankRepository(),
-                repo,
-                new AttemptManager(repo),
-                new GradingService());
-        SwingUtilities.invokeLater(() -> new SwingUI(app).setVisible(true));
+                new InMemoryExamAttemptRepository()
+        );
+        new SwingUI(service);
     }
 }
