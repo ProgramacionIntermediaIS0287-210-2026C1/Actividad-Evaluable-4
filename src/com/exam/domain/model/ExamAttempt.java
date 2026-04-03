@@ -1,46 +1,45 @@
-import java.time.LocalDateTime;
+package com.exam.domain.model;
+
+import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.QuestionId;
+import com.exam.domain.vo.ValueObjects.StudentId;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class ExamAttempt {
 
-    private final ExamId examId;
-    private final StudentId studentId;
-    private final localDateTime startTime;
-    private LocalDateTime endTime;
+    private final studentId studentId;
+    private final Map<QuestionId, AnswerText> ansMap;
+    private boolean finished;
 
-    private final Map<QuestionId, AnswerText> respuesta = new HashMap<>();
-
-    public ExamAttempt (ExamtId examId, StudentId studentId){
-        this.examId = examId;
+    public ExamAttempt(StudentId studentId){
         this.studentId = studentId;
-        this.startTime = LocalDateTime.now();
+        this.ansMap = new HashMap<>();
+        this.finished = false;
     }
 
-    public void responder (QuestionId questionId, AnswerText respuesta){
-        if (estaFinalizado()) {
-            throw new IllegalStateException("El examen ya fue finalizado");
-
+    public void answerQuestion(QuestionId questionId, AnswerText answer){
+        if (finished) {
+            throw new IllegalStateException("El intento ya esta finalixado ");
         }
-        respuesta.put(questionId, respuesta);
+        answer.putt(questionId, answer);
     }
 
-    public void finalizar(){
-        this.endTime = LocalDateTime.now();
+    public void finish(){
+        this.finished = true;
     }
 
-    public boolean estaFinalizado(){
-        return endTime != null;
+    public boolean isFinished(){
+        return finished;
     }
 
-    public Map<QuestionId, AnswerText> getRespuestas(){
-        return respuestas;
-    }
-
-    public ExamId getExamId(){
-        return examId;
+    public Map<QuestionId, AnswerText> getAnswers(){
+        return answers;
     }
 
     public StudentId getStudentId(){
         return studentId;
     }
+
 }

@@ -74,8 +74,7 @@ public class QuestionTypes {
             var correctSet = List.of(correctAnswer.value().split(","));
             var studentSet = List.of(studentAnswer.value().split(","));
 
-            return studentSet.containsAll(correctSet)
-                    && correctSet.containsAll(studentSet);
+            return studentSet.containsAll(correctSet) && correctSet.containsAll(studentSet);
         }
 
         @Override
