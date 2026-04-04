@@ -1,97 +1,57 @@
 package com.exam;
 
-import com.exam.application.*;
+import com.exam.application.ExamApplicationService;
+import com.exam.application.dto.ResultDTO;
 import com.exam.domain.model.*;
-import com.exam.domain.vo.ValueObjects.AnswerText;
 
 import javax.swing.*;
-import java.awt.*;
-import java.util.List;
+import java.util.*;
 
-public class SwingUI extends JFrame {
+public class SwingUI {
 
-    private ExamApplicationService app = new ExamApplicationService();
-    private List<Question> preguntasDominio;
-    private ExamAttempt intento = new ExamAttempt();
+    public static void main(String[] args) {
 
-    private int score;
-    private int total;
+        ExamApplicationService app = new ExamApplicationService();
 
-    private int index = 0;
-    private JLabel lblPregunta = new JLabel();
-    private JTextField txtRespuesta = new JTextField();
-      
-      public void ResultDTO(int score, int total) {
-        this.score = score;
-        this.total = total;
-    }
+        String id = JOptionPane.showInputDialog("Ingrese ID:");
+        String nombre = JOptionPane.showInputDialog("Ingrese nombre:");
 
-    public int getScore() {
-        return score;
-    }
+        Estudiante estudiante = new Estudiante(id, nombre);
 
-    public int getTotal() {
-        return total;
-    }
+        List<Question> preguntas = new ArrayList<>();
 
+        preguntas.add(new QuestionTypes.TrueFalse("1", "Java es lenguaje?", true));
+        preguntas.add(new QuestionTypes.UniqueChoice(
+                "2",
+                "Capital de Colombia?",
+                Arrays.asList("Bogotá", "Lima", "Quito"),
+                "Bogotá"
+        ));
 
-    public SwingUI() {
+        ExamAttempt intento = app.iniciarExamen(estudiante.getId());
 
-        setTitle("Sistema de Examen");
-        setSize(400, 200);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        for (Question q : preguntas) {
 
-        JButton btnSiguiente = new JButton("Siguiente");
+            String texto = q.getTexto();
 
-        add(lblPregunta, BorderLayout.NORTH);
-        add(txtRespuesta, BorderLayout.CENTER);
-        add(btnSiguiente, BorderLayout.SOUTH);
+            if (q instanceof QuestionTypes.UniqueChoice) {
+                texto += "\nOpciones:\n";
+                for (String op : ((QuestionTypes.UniqueChoice) q).getOpciones()) {
+                    texto += "- " + op + "\n";
+                }
+            }
 
-        btnSiguiente.addActionListener(e -> siguiente());
+            if (q instanceof QuestionTypes.TrueFalse) {
+                texto += "\n(V/F)";
+            }
 
-        cargar();
-        mostrar();
-
-        setVisible(true);
-    }
-
-   private void cargar() {
-    try {
-        preguntasDominio = app.cargarDominio("preguntas.csv");
-    } catch (Exception e) {
-        javax.swing.JOptionPane.showMessageDialog(this, e.getMessage());
-    }
-}
-    private void mostrar() {
-        Question q = preguntasDominio.get(index);
-        lblPregunta.setText(q.getTexto());
-        txtRespuesta.setText("");
-    }
-
-
-    private void siguiente() {
-
-        Question q = preguntasDominio.get(index);
-
-        intento.responder(q.getId(), new AnswerText(txtRespuesta.getText()));
-
-        index++;
-
-        if (index >= preguntasDominio.size()) {
-
-            intento.finalizar();
-
-            var result =app.finalizarExamen("estudiante1", preguntasDominio, intento);
-
-
-            JOptionPane.showMessageDialog(this,
-    "Resultado: " + result.getScore() + "/" + result.getTotal()
-);
-            System.exit(0);
+            String resp = JOptionPane.showInputDialog(texto);
+            intento.responder(q.getId(), resp);
         }
 
-        mostrar();
-        
+        ResultDTO resultado = app.finalizarExamen(estudiante.getId(), preguntas, intento);
+
+        JOptionPane.showMessageDialog(null,
+                "Puntaje: " + resultado.getScore() + "/" + resultado.getTotal());
     }
 }
