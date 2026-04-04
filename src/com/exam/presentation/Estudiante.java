@@ -1,4 +1,5 @@
-package com;
+package com.exam.presentation;
+
 public class Estudiante {
 
     private String id;

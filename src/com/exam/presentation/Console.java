@@ -1,9 +1,10 @@
 package com.exam.presentation;
 import java.util.Scanner;
 import com.exam.application.ExamApplicationService;
+import com.exam.application.dto.DTOs.ResultDTO;
 import com.exam.domain.model.*;
 import com.exam.domain.vo.ValueObjects.AnswerText;
-
+import com.exam.presentation.Estudiante;
 
 
 import java.util.*;
@@ -46,7 +47,7 @@ public static void main(String[] args) {
  public void run() {
 
         try {
-            // 🔥 Cargar preguntas correctamente
+            
             List<Question> preguntas = app.cargarDominio("preguntas.csv");
 
             System.out.print("Ingrese ID del estudiante: ");
@@ -75,7 +76,7 @@ public static void main(String[] args) {
             var resultado = app.finalizarExamen(estudiante.getId(), preguntas, intento);
 
             System.out.println("\n=== RESULTADO ===");
-            System.out.println("Puntaje: " + resultado.getScore() + "/" + resultado.getTotal());
+            System.out.println("Puntaje: " + ((ResultDTO) resultado).getScore() + "/" + ((ResultDTO) resultado).getTotal());
 
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());

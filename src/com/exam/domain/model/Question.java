@@ -17,8 +17,8 @@ public abstract class Question {
 
     public abstract boolean esCorrecta(AnswerText respuesta);
 
-    public String getTexto() {
+    public String getValue() {
         
-        throw new UnsupportedOperationException("Unimplemented method 'getTexto'");
+       return value;
     }
 }

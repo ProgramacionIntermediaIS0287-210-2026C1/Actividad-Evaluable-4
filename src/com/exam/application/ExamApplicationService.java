@@ -12,7 +12,7 @@ public class ExamApplicationService {
 
     private CsvQuestionBankRepository csvRepo = new CsvQuestionBankRepository();
 
-    // 🔥 inyección correcta
+    
     private ExamAttemptRepository attemptRepo = new InMemoryExamAttemptRepository();
     private AttemptManager attemptManager = new AttemptManager(attemptRepo);
 
@@ -38,7 +38,7 @@ public class ExamApplicationService {
     }
 
     public Object calificar(List<Question> preguntasDominio, ExamAttempt intento) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'calificar'");
+       
+        result;
     }
 }

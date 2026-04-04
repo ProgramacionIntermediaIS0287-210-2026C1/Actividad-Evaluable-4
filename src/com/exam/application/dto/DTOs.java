@@ -4,7 +4,7 @@ import java.util.List;
 
 public class DTOs {
 
-    // Para mostrar preguntas en UI (sin exponer dominio)
+   
     public static class QuestionDTO {
         public String id;
         public String enunciado;
@@ -31,7 +31,7 @@ public class DTOs {
         return score;
     }
 
-    public int getTotal() {
+    public int getValue() {
         return total;
     }
 }
