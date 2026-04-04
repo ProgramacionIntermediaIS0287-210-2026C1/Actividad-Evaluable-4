@@ -10,6 +10,7 @@ public class Main {
 
         try (Scanner sc = new Scanner(System.in)) {
             while (true) {
+                
 
                 System.out.println("\n=== SISTEMA DE EXÁMENES ===");
                 System.out.println("1. Ejecutar en Consola");

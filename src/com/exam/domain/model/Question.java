@@ -16,4 +16,9 @@ public abstract class Question {
     public String getEnunciado() { return enunciado; }
 
     public abstract boolean esCorrecta(AnswerText respuesta);
+
+    public String getTexto() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTexto'");
+    }
 }
