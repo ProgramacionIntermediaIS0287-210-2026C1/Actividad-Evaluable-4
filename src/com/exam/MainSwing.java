@@ -7,13 +7,13 @@ public class MainSwing {
         // Repos fake (para probar)
         CsvQuestionBankRepository questionRepo = () -> List.of(
                 new TrueFalseQuestion(
-                        new QuestionId("1"),
+                        new Question("1"),
                         "Java es un lenguaje?",
                         new AnswerText("true")
                 )
         );
 
-        ExamAttemRepository attemptRepo = new InMemoryExamAttemRepository();
+        ExamAttempt attemptRepo = new InMemoryExamAttemRepository();
 
         AttemptManager attemptManager = new AttemptManager(attemptRepo);
         GradingService gradingService = new GradingService();

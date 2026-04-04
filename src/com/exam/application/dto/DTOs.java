@@ -7,7 +7,7 @@ public class DTOs {
     private String studentId;
     private List<Question> questions;
 
-    public ExamAttemptDTO(String studentId, List<Question> questions) {
+    public DTOs(String studentId, List<Question> questions) {
         this.studentId = studentId;
         this.questions = questions;
     }
