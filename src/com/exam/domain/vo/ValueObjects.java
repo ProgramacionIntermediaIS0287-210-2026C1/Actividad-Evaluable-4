@@ -16,5 +16,8 @@ public class ValueObjects {
         public String getValue() {
             return value;
         }
+        public String getTexto() {
+    return value;
+}
     }
 }
