@@ -1,5 +1,4 @@
 package com.exam.presentation;
-import java.util.Scanner;
 import com.exam.application.ExamApplicationService;
 import com.exam.application.dto.DTOs.ResultDTO;
 import com.exam.domain.model.*;
@@ -104,4 +103,7 @@ public static void main(String[] args) {
         
         throw new UnsupportedOperationException("Unimplemented method 'iniciar'");
     }
+    public String getTexto() {
+    return texto;
+}
 }

@@ -19,6 +19,10 @@ public abstract class Question {
 
     public String getValue() {
         
-       return value;
+       String texto;
+
+    public String getTexto() {
+    return texto;
+}
     }
 }
