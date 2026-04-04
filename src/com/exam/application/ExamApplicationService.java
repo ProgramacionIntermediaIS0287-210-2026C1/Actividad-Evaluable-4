@@ -1,44 +1,42 @@
 package com.exam.application;
 
-import com.exam.domain.model.*;
-import com.exam.domain.service.*;
-import com.exam.domain.repository.Repositories.ExamAttemptRepository;
-import com.exam.infrastructure.*;
-import com.exam.application.dto.DTOs.*;
+import java.util.List;
 
-import java.util.*;
+import com.exam.domain.model.Question;
+import com.exam.domain.model.ExamAttempt;
+import com.exam.domain.service.GradingService;
+import com.exam.application.dtos.ResultDTO;
 
 public class ExamApplicationService {
 
-    private CsvQuestionBankRepository csvRepo = new CsvQuestionBankRepository();
+    private GradingService gradingService = new GradingService();
 
-    
-    private ExamAttemptRepository attemptRepo = new InMemoryExamAttemptRepository();
-    private AttemptManager attemptManager = new AttemptManager(attemptRepo);
-
-    private GradinService grading = new GradinService();
-
-    public List<Question> cargarDominio(String path) throws Exception {
-        return csvRepo.load(path);
-    }
-
+    // iniciar examen
     public ExamAttempt iniciarExamen(String studentId) {
-        return attemptManager.iniciarIntento(studentId);
+        return new ExamAttempt(studentId);
     }
 
+    // finalizar examen
     public ResultDTO finalizarExamen(String studentId, List<Question> preguntas, ExamAttempt intento) {
 
-        intento.finalizar();
+        int score = 0;
 
-        int score = grading.calificar(preguntas, intento);
+        for (Question q : preguntas) {
 
-        attemptManager.finalizarIntento(studentId);
+            // obtener respuesta del intento
+            var respuesta = intento.getRespuesta(q.getId());
 
-        return new ResultDTO(score, preguntas.size());
-    }
+            // validar respuesta
+            if (q.esCorrecta(respuesta)) {
+                score++;
+            }
+        }
 
-    public Object calificar(List<Question> preguntasDominio, ExamAttempt intento) {
-       
-        result;
+        int total = preguntas.size();
+
+        // 🔥 ESTA ES LA LÍNEA QUE TE FALLABA
+        ResultDTO result = new ResultDTO(score, total);
+
+        return result;
     }
 }

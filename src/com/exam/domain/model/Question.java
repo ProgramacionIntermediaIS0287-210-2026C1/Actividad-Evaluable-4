@@ -1,28 +1,25 @@
 package com.exam.domain.model;
 
-import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects;
 
 public abstract class Question {
 
     protected String id;
-    protected String enunciado;
+    protected String texto;
 
-    public Question(String id, String enunciado) {
+    public Question(String id, String texto) {
         this.id = id;
-        this.enunciado = enunciado;
+        this.texto = texto;
     }
 
-    public String getId() { return id; }
-    public String getEnunciado() { return enunciado; }
-
-    public abstract boolean esCorrecta(AnswerText respuesta);
-
-    public String getValue() {
-        
-       String texto;
+    public String getId() {
+        return id;
+    }
 
     public String getTexto() {
-    return texto;
-}
+        return texto;
     }
+
+    // 🔥 ESTE MÉTODO ES EL QUE FALTA
+    public abstract boolean esCorrecta(ValueObjects.AnswerText answer);
 }

@@ -3,7 +3,7 @@ import com.exam.application.ExamApplicationService;
 import com.exam.application.dto.DTOs.ResultDTO;
 import com.exam.domain.model.*;
 import com.exam.domain.vo.ValueObjects.AnswerText;
-import com.exam.presentation.Estudiante;
+import com.exam.Estudiante;
 
 
 import java.util.*;
@@ -99,11 +99,6 @@ public static void main(String[] args) {
         }
     }
 
-    public void iniciar() {
-        
-        throw new UnsupportedOperationException("Unimplemented method 'iniciar'");
-    }
-    public String getTexto() {
-    return texto;
-}
+   
+   
 }

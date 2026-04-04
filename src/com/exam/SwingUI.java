@@ -65,7 +65,7 @@ public class SwingUI extends JFrame {
 }
     private void mostrar() {
         Question q = preguntasDominio.get(index);
-        lblPregunta.setText(q.getEnunciado());
+        lblPregunta.setText(q.getTexto());
         txtRespuesta.setText("");
     }
 
@@ -92,5 +92,6 @@ public class SwingUI extends JFrame {
         }
 
         mostrar();
+        
     }
 }

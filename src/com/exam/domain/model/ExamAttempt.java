@@ -1,5 +1,6 @@
 package com.exam.domain.model;
 
+import com.exam.domain.vo.ValueObjects;
 import com.exam.domain.vo.ValueObjects.AnswerText;
 import java.util.*;
 
@@ -16,6 +17,9 @@ public class ExamAttempt {
     public void finalizar() {
         finalizado = true;
     }
+    public ValueObjects.AnswerText getRespuesta(String questionId) {
+    return respuestas.get(questionId);
+}
 
     public Map<String, AnswerText> getRespuestas() {
         return respuestas;
