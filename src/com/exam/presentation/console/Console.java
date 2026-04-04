@@ -1,4 +1,4 @@
-package com.exam.presentation;
+package com.exam.presentation.console;
 
 import java.util.List;
 import java.util.Scanner;
@@ -25,8 +25,8 @@ public class Console {
 
             System.out.println("=== SISTEMA DE EXÁMENES ===");
 
-            // Cargar preguntas
-            List<Question> preguntas = app.cargarDominio("preguntas.csv");
+            // Cargar preguntas.csv
+            List<Question> preguntas.csv = app.cargarDominio("src/preguntas.csv");
 
             // Pedir estudiante
             System.out.print("Ingrese ID del estudiante: ");
@@ -42,8 +42,8 @@ public class Console {
             ExamAttempt intento = app.iniciarExamen(estudiante.getId());
         
 
-            // Iterar preguntas
-            for (Question q : preguntas) {
+            // Iterar preguntas.csv
+            for (Question q : preguntas.csv) {
 
                 mostrarPregunta(q);
 
@@ -54,7 +54,7 @@ public class Console {
             }
 
             // Finalizar examen
-            var resultado = app.finalizarExamen(estudiante.getId(), preguntas, intento);
+            var resultado = app.finalizarExamen(estudiante.getId(), preguntas.csv, intento);
 
             System.out.println("\n=== RESULTADO ===");
             System.out.println("Puntaje: " + resultado.score + "/" + resultado.total);
