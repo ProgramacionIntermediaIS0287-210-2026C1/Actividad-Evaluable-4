@@ -14,7 +14,7 @@ public class ExamApplicationService {
     ) {
         this.questionRepo = qRepo;
         this.attemptRepo = aRepo;
-        this.attemptManager = new AttemptManager(aRepo);
+        this.attemptManager = new AttemptManager (aRepo);
         this.gradingService = new GradingService();
     }
 
