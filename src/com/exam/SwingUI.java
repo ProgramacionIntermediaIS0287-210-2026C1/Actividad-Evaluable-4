@@ -71,6 +71,7 @@ public class SwingUI extends JFrame {
         txtRespuesta.setText("");
     }
 
+
     private void siguiente() {
 
         Question q = preguntasDominio.get(index);
