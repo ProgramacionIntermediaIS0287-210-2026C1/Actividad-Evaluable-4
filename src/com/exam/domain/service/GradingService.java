@@ -1,16 +1,18 @@
-package domain.service;
+package domain;
+
+import java.util.List;
 
 public class GradingService {
 
-    public int calificar(ExamAttempt attempt) {
+    public int calificar(ExamAttempt exam, List<String> respuestas) {
         int score = 0;
 
-        for (Question q : attempt.getQuestions()) {
-            String answer = attempt.getAnswers().get(q.id);
-            if (answer != null && q.isCorrect(answer)) {
+        for (int i = 0; i < exam.getPreguntas().size(); i++) {
+            if (exam.getPreguntas().get(i).esCorrecta(respuestas.get(i))) {
                 score++;
             }
         }
+
         return score;
     }
 }
