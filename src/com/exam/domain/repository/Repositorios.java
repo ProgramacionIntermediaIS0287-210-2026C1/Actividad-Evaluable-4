@@ -1,3 +1,6 @@
-package domain.value;
+import java.util.Optional;
 
-public record StudentId(String value) {}
+public interface ExamAttemptRepository {
+    Optional<ExamAttempt> findActiveByStudent(StudentId studentId);
+    void save(ExamAttempt attempt);
+}
