@@ -83,12 +83,12 @@ public class SwingUI extends JFrame {
 
             intento.finalizar();
 
-            var result = app.finalizarExamen("estudiante1", preguntasDominio, intento);
+            var result =app.finalizarExamen("estudiante1", preguntasDominio, intento);
 
 
             JOptionPane.showMessageDialog(this,
-                   "Resultado: " + result.getScore() + "/" + result.getTotal()
-                   
+    "Resultado: " + result.getScore() + "/" + result.getTotal()
+);
             System.exit(0);
         }
 
