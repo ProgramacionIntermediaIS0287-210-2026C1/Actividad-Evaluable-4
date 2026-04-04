@@ -3,6 +3,7 @@ package com.exam;
 import com.exam.application.ExamApplicationService;
 import com.exam.application.dto.ResultDTO;
 import com.exam.domain.model.*;
+import com.exam.presentation.Estudiante;
 
 import javax.swing.*;
 import java.util.*;

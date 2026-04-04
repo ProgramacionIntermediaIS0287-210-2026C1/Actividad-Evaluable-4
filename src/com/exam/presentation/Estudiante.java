@@ -1,4 +1,4 @@
-package com.exam.domain.model;
+package com.exam.presentation;
 
 public class Estudiante {
     private String id;
