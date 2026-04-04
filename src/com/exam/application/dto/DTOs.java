@@ -26,5 +26,14 @@ public class DTOs {
             this.score = score;
             this.total = total;
         }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getTotal() {
+        return total;
     }
 }
+    }
+

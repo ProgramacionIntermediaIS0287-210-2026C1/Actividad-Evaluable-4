@@ -1,48 +1,64 @@
 package com.exam.presentation;
 
-import com.exam.application.*;
-import com.exam.domain.model.*;
-import com.exam.domain.vo.ValueObjects.AnswerText;
+import java.util.Scanner;
 
-import java.util.*;
+import com.exam.SwingUI;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        try {
+        Scanner sc = new Scanner(System.in);
 
-            Scanner sc = new Scanner(System.in);
-            ExamApplicationService app = new ExamApplicationService();
+        while (true) {
 
-            List<Question> preguntas = app.cargarDominio("preguntas.csv");
+            System.out.println("\n=== SISTEMA DE EXÁMENES ===");
+            System.out.println("1. Ejecutar en Consola");
+            System.out.println("2. Ejecutar en Swing (Interfaz gráfica)");
+            System.out.println("3. Salir");
+            System.out.print("Seleccione una opción: ");
 
-            System.out.print("ID estudiante: ");
-            String student = sc.nextLine();
+            String opcion = sc.nextLine();
 
-            // 🔥 ahora usa AttemptManager
-            ExamAttempt intento = app.iniciarExamen(student);
+            switch (opcion) {
 
-            for (Question q : preguntas) {
+                case "1":
+                    ejecutarConsola();
+                    break;
 
-                System.out.println("\n" + q.getEnunciado());
+                case "2":
+                    ejecutarSwing();
+                    break;
 
-                if (q instanceof QuestionTypes.UniqueChoice uc) {
-                    uc.getOpciones().forEach(op -> System.out.println("- " + op));
-                }
+                case "3":
+                    System.out.println("Saliendo del sistema...");
+                    System.exit(0);
+                    break;
 
-                System.out.print("Respuesta: ");
-                String resp = sc.nextLine();
-
-                intento.responder(q.getId(), new AnswerText(resp));
+                default:
+                    System.out.println("Opción inválida");
             }
+        }
+    }
 
-            var result = app.finalizarExamen(student, preguntas, intento);
-
-            System.out.println("\nResultado: " + result.score + "/" + result.total);
-
+    // Ejecuta modo consola
+    private static void ejecutarConsola() {
+        try {
+            Console console = new Console();
+            console.iniciar();
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.getMessage());
+            System.out.println("Error en consola: " + e.getMessage());
+        }
+    }
+
+    // Ejecuta modo Swing
+    private static void ejecutarSwing() {
+        try {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                new SwingUI();
+            });
+        } catch (Exception e) {
+            System.out.println("Error en Swing: " + e.getMessage());
         }
     }
 }

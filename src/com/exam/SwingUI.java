@@ -1,4 +1,4 @@
-package com.exam.presentation;
+package com.exam;
 
 import com.exam.application.*;
 import com.exam.application.dto.DTOs.*;
@@ -8,6 +8,7 @@ import com.exam.domain.vo.ValueObjects.AnswerText;
 import javax.swing.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class SwingUI extends JFrame {
 
@@ -15,9 +16,26 @@ public class SwingUI extends JFrame {
     private List<Question> preguntasDominio;
     private ExamAttempt intento = new ExamAttempt();
 
+    private int score;
+    private int total;
+
     private int index = 0;
     private JLabel lblPregunta = new JLabel();
     private JTextField txtRespuesta = new JTextField();
+      
+      public void ResultDTO(int score, int total) {
+        this.score = score;
+        this.total = total;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public int getTotal() {
+        return total;
+    }
+
 
     public SwingUI() {
 
@@ -40,14 +58,13 @@ public class SwingUI extends JFrame {
         setVisible(true);
     }
 
-    private void cargar() {
-        try {
-            preguntasDominio = app.cargarDominio("preguntas.csv");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }
+   private void cargar() {
+    try {
+        preguntasDominio = app.cargarDominio("preguntas.csv");
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, e.getMessage());
     }
-
+}
     private void mostrar() {
         Question q = preguntasDominio.get(index);
         lblPregunta.setText(q.getEnunciado());
@@ -66,11 +83,12 @@ public class SwingUI extends JFrame {
 
             intento.finalizar();
 
-            var result = app.calificar(preguntasDominio, intento);
+            var result = app.finalizarExamen("estudiante1", preguntasDominio, intento);
+
 
             JOptionPane.showMessageDialog(this,
-                    "Resultado: " + result.score + "/" + result.total);
-
+                   "Resultado: " + result.getScore() + "/" + result.getTotal()
+                   
             System.exit(0);
         }
 

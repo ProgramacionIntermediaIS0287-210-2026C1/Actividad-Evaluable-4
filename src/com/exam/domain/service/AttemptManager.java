@@ -1,21 +1,20 @@
 package com.exam.domain.service;
 
-import com.exam.infrastructure.InMemoryExamAttemptRepository;
 import com.exam.domain.model.ExamAttempt;
+import com.exam.domain.repository.Repositories.ExamAttemptRepository;
 
 public class AttemptManager {
 
-    private InMemoryExamAttemptRepository repo;
+    private ExamAttemptRepository repo;
 
-    public AttemptManager(InMemoryExamAttemptRepository repo) {
+    public AttemptManager(ExamAttemptRepository repo) {
         this.repo = repo;
     }
 
-    // Iniciar intento (valida regla de negocio)
     public ExamAttempt iniciarIntento(String studentId) {
 
         if (repo.existsActiveAttempt(studentId)) {
-            throw new RuntimeException("El estudiante ya tiene un intento activo");
+            throw new RuntimeException("Ya tiene intento activo");
         }
 
         ExamAttempt intento = new ExamAttempt();
@@ -24,9 +23,7 @@ public class AttemptManager {
         return intento;
     }
 
-    // Finalizar intento
     public void finalizarIntento(String studentId) {
-
         repo.remove(studentId);
     }
 }
