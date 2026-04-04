@@ -8,35 +8,35 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Scanner sc = new Scanner(System.in);
+        try (Scanner sc = new Scanner(System.in)) {
+            while (true) {
 
-        while (true) {
+                System.out.println("\n=== SISTEMA DE EXÁMENES ===");
+                System.out.println("1. Ejecutar en Consola");
+                System.out.println("2. Ejecutar en Swing (Interfaz gráfica)");
+                System.out.println("3. Salir");
+                System.out.print("Seleccione una opción: ");
 
-            System.out.println("\n=== SISTEMA DE EXÁMENES ===");
-            System.out.println("1. Ejecutar en Consola");
-            System.out.println("2. Ejecutar en Swing (Interfaz gráfica)");
-            System.out.println("3. Salir");
-            System.out.print("Seleccione una opción: ");
+                String opcion = sc.nextLine();
 
-            String opcion = sc.nextLine();
+                switch (opcion) {
 
-            switch (opcion) {
+                    case "1":
+                        ejecutarConsola();
+                        break;
 
-                case "1":
-                    ejecutarConsola();
-                    break;
+                    case "2":
+                        ejecutarSwing();
+                        break;
 
-                case "2":
-                    ejecutarSwing();
-                    break;
+                    case "3":
+                        System.out.println("Saliendo del sistema...");
+                        System.exit(0);
+                        break;
 
-                case "3":
-                    System.out.println("Saliendo del sistema...");
-                    System.exit(0);
-                    break;
-
-                default:
-                    System.out.println("Opción inválida");
+                    default:
+                        System.out.println("Opción inválida");
+                }
             }
         }
     }

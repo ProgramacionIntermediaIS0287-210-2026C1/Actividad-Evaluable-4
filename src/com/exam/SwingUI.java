@@ -1,13 +1,11 @@
 package com.exam;
 
 import com.exam.application.*;
-import com.exam.application.dto.DTOs.*;
 import com.exam.domain.model.*;
 import com.exam.domain.vo.ValueObjects.AnswerText;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
 
 public class SwingUI extends JFrame {
