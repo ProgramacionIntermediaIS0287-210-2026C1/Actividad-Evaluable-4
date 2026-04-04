@@ -3,7 +3,7 @@ package domain.service;
 import domain.model.*;
 import domain.value.*;
 
-public class GradingService {
+public class GradinService {
 
     public Calificacion calificar(ExamAttempt attempt) {
         int correct = 0;

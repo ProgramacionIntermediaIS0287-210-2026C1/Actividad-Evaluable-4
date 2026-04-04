@@ -1,4 +1,4 @@
-package domain.value;
+package domain.vo;
 
 public class ValueObjects {
 

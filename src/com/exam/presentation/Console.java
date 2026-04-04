@@ -6,12 +6,12 @@ import domain.value.*;
 
 import java.util.*;
 
-public class ConsoleUI {
+public class Console {
 
     private ExamApplicationService appService;
 
-    public ConsoleUI(ExamApplicationService appService) {
-        this.appService = appService;
+    public ConsoleUI(ExamApplicationService appservice) {
+        this.appService = appservice;
     }
 
     public void start() {

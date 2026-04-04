@@ -5,7 +5,7 @@ import domain.value.*;
 
 public class AttemptManager {
 
-    private ExamAttemptRepository repository;
+    private InMemoryExamAttemRepository repository;
 
     public AttemptManager(ExamAttemptRepository repository) {
         this.repository = repository;

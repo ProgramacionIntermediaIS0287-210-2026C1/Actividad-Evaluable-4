@@ -1,4 +1,4 @@
-public enum QuestionType {
+public enum QuestionTypes {
     SINGLE_CHOICE,
     MULTIPLE_CHOICE,
     TRUE_FALSE,
