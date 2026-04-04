@@ -1,6 +1,4 @@
-package com.exam.service;
-
-import com.exam.repository.Repositories.InMemoryExamAttemRepository;
+package domain.service;
 
 public class AttemptManager {
 

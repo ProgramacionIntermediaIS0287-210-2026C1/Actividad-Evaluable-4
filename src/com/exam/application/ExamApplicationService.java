@@ -1,10 +1,25 @@
-public ExamAttempt iniciarExamen(StudentId studentId) {
-    attemptManager.verificarIntentoActivo(studentId);
+import domain.service.*;
+import java.util.*;
 
-    var questions = questionRepo.findAll();
-    var attempt = new ExamAttempt(studentId, questions);
+public class ExamApplicationService {
 
-    attemptRepo.save(attempt);
+    private CvsQuestionBankRepository questionRepo;
+    private ExamAttempt attemptRepo;
+    private AttemptManager attemptManager;
+    private GradingService gradingService;
 
-    return new ExamAttemptDTO(studentId, questions);
-}
+    public ExamApplicationService(
+            CvsQuestionBankRepository qRepo,
+            ExamAttempt aRepo
+    ) {
+        this.questionRepo = qRepo;
+        this.attemptRepo = aRepo;
+        this.attemptManager = new AttemptManager(aRepo);
+        this.gradingService = new GradingService();
+    }
+
+    public ExamAttempt iniciarExamen(StudentId studentId) {
+
+        attemptManager.verificarIntentoActivo(studentId);
+
+        List<Question> questions = que

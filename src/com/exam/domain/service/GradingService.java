@@ -1,6 +1,4 @@
-package com.exam.service;
-
-import com.exam.domain.model.*;
+package domain.service;
 
 public class GradingService {
 

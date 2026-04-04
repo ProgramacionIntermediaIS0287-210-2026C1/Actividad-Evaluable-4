@@ -1,6 +1,5 @@
-package com.exam.repository;
 
-import com.exam.domain.model.*;
+
 import java.util.*;
 
 public interface Repositorio {
