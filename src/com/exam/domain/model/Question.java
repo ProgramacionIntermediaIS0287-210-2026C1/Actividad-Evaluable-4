@@ -1,9 +1,6 @@
 package com.exam.domain.model;
 
-import com.exam.domain.vo.ValueObjects;
-
 public abstract class Question {
-
     protected String id;
     protected String texto;
 
@@ -20,6 +17,5 @@ public abstract class Question {
         return texto;
     }
 
-    // 🔥 ESTE MÉTODO ES EL QUE FALTA
-    public abstract boolean esCorrecta(ValueObjects.AnswerText answer);
+    public abstract boolean esCorrecta(String respuesta);
 }

@@ -1,7 +1,6 @@
-package com.exam.presentation;
+package com.exam.domain.model;
 
 public class Estudiante {
-
     private String id;
     private String nombre;
 
@@ -12,9 +11,5 @@ public class Estudiante {
 
     public String getId() {
         return id;
-    }
-
-    public String getNombre() {
-        return nombre;
     }
 }

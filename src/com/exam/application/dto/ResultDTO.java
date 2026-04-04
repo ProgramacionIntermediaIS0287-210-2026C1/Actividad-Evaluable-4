@@ -1,7 +1,6 @@
 package com.exam.application.dto;
 
 public class ResultDTO {
-
     private int score;
     private int total;
 
@@ -18,5 +17,4 @@ public class ResultDTO {
         return total;
     }
 }
-    
 

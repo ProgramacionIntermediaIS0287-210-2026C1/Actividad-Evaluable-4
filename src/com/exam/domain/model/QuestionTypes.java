@@ -1,43 +1,41 @@
 package com.exam.domain.model;
 
-import com.exam.domain.vo.ValueObjects.AnswerText;
-import java.util.*;
+import java.util.List;
 
 public class QuestionTypes {
 
     public static class UniqueChoice extends Question {
-
         private List<String> opciones;
         private String correcta;
 
-        public UniqueChoice(String id, String enunciado, List<String> opciones, String correcta) {
-            super(id, enunciado);
+        public UniqueChoice(String id, String texto, List<String> opciones, String correcta) {
+            super(id, texto);
             this.opciones = opciones;
             this.correcta = correcta;
-        }
-
-        @Override
-        public boolean esCorrecta(AnswerText r) {
-            return r.getValue().equalsIgnoreCase(correcta);
         }
 
         public List<String> getOpciones() {
             return opciones;
         }
+
+        @Override
+        public boolean esCorrecta(String respuesta) {
+            return correcta.equalsIgnoreCase(respuesta);
+        }
     }
 
     public static class TrueFalse extends Question {
-
         private boolean correcta;
 
-        public TrueFalse(String id, String enunciado, boolean correcta) {
-            super(id, enunciado);
+        public TrueFalse(String id, String texto, boolean correcta) {
+            super(id, texto);
             this.correcta = correcta;
         }
 
         @Override
-        public boolean esCorrecta(AnswerText r) {
-            return r.getValue().equalsIgnoreCase("V") == correcta;
+        public boolean esCorrecta(String respuesta) {
+            return (respuesta.equalsIgnoreCase("V") && correcta) ||
+                   (respuesta.equalsIgnoreCase("F") && !correcta);
         }
     }
 }

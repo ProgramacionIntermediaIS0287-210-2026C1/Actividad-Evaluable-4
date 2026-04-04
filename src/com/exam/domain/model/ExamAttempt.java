@@ -1,27 +1,22 @@
 package com.exam.domain.model;
 
-import com.exam.domain.vo.ValueObjects;
-import com.exam.domain.vo.ValueObjects.AnswerText;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ExamAttempt {
 
-    private Map<String, AnswerText> respuestas = new HashMap<>();
-    private boolean finalizado = false;
+    private String studentId;
+    private Map<String, String> respuestas = new HashMap<>();
 
-    public void responder(String questionId, AnswerText r) {
-        if (finalizado) throw new RuntimeException("Examen ya finalizado");
-        respuestas.put(questionId, r);
+    public ExamAttempt(String studentId) {
+        this.studentId = studentId;
     }
 
-    public void finalizar() {
-        finalizado = true;
+    public void responder(String questionId, String respuesta) {
+        respuestas.put(questionId, respuesta);
     }
-    public ValueObjects.AnswerText getRespuesta(String questionId) {
-    return respuestas.get(questionId);
-}
 
-    public Map<String, AnswerText> getRespuestas() {
+    public Map<String, String> getRespuestas() {
         return respuestas;
     }
 }
