@@ -6,17 +6,28 @@ import java.util.Map;
 public class ExamAttempt {
 
     private String studentId;
-    private Map<String, String> respuestas = new HashMap<>();
+    private Map<String, String> respuestas;
 
-    public ExamAttempt(String studentId) {
-        this.studentId = studentId;
+    // ✅ CONSTRUCTOR VACÍO (ESTE TE FALTABA)
+    public ExamAttempt() {
+        this.respuestas = new HashMap<>();
     }
 
-    public void responder(String questionId, String respuesta) {
-        respuestas.put(questionId, respuesta);
+    // (Opcional pero recomendado)
+    public ExamAttempt(String studentId) {
+        this.studentId = studentId;
+        this.respuestas = new HashMap<>();
+    }
+
+    public void responder(String preguntaId, String respuesta) {
+        respuestas.put(preguntaId, respuesta);
     }
 
     public Map<String, String> getRespuestas() {
         return respuestas;
+    }
+
+    public String getStudentId() {
+        return studentId;
     }
 }
