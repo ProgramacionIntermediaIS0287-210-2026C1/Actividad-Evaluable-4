@@ -1,4 +1,4 @@
-package domain;
+package com.exam.domain.model;
 
 import com.exam.domain.vo.ValueObjects.AnswerText;
 import com.exam.domain.vo.ValueObjects.QuestionId;
