@@ -1,4 +1,4 @@
-public ExamAttemptDTO iniciarExamen(StudentId studentId) {
+public ExamAttempt iniciarExamen(StudentId studentId) {
     attemptManager.verificarIntentoActivo(studentId);
 
     var questions = questionRepo.findAll();

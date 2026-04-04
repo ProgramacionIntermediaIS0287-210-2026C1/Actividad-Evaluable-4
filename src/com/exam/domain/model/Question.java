@@ -1,4 +1,4 @@
-abstract class Question {
+public abstract class Question {
     protected String id;
     protected String text;
     protected String correctAnswer;
@@ -10,10 +10,5 @@ abstract class Question {
     }
 
     public abstract boolean isCorrect(String studentAnswer);
-
     public abstract void displayFormat();
-
-    public String getId() {
-        return id;
-    }
 }
