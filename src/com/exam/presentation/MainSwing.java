@@ -1,7 +1,10 @@
 package com.exam.presentation;
 
-public class Main {
+import com.exam.SwingUI;
+
+public class MainSwing {
+
     public static void main(String[] args) {
-        new Console().run();
+        new SwingUI();
     }
 }
