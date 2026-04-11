@@ -5,32 +5,43 @@ import com.exam.domain.repository.*;
 import com.exam.domain.vo.ValueObjects.StudentId;
 import java.util.List;
 
-public class ExamAplicationService {
+public class EvaluationManager {
 
-    private final QuestionBankRepository questionRepo;
-    private final ExamAttemptRepository attemptRepo;
-    private ExamAttempt currentAttempt;
+    private final QuestionBankRepository _questionData;
+    private final ExamAttemptRepository _attemptData;
+    private ExamAttempt activeSession;
 
-    public ExamService(QuestionBankRepository q, ExamAttemptRepository a){
-        this.questionRepo = q;
-        this.attemptRepo = a;
+    // Uso de nombres de parámetros más descriptivos
+    public EvaluationManager(QuestionBankRepository questionSource, ExamAttemptRepository persistence) {
+        this._questionData = questionSource;
+        this._attemptData = persistence;
     }
 
-    public void startExam(StudentId id){
-        List<Question> questions = questionRepo.findAll();
-        currentAttempt = new ExamAttempt(id, questions);
-        attemptRepo.save(currentAttempt);
+    /**
+     * Inicializa un nuevo proceso de evaluación para un estudiante.
+     */
+    public void beginTest(StudentId student) {
+        var availableQuestions = _questionData.findAll();
+        this.activeSession = new ExamAttempt(student, availableQuestions);
+        
+        // Persistencia inmediata de la sesión creada
+        _attemptData.save(this.activeSession);
     }
 
-    public List<Question> getQuestions(){
-        return currentAttempt.getQuestions();
+    public List<Question> retrieveCurrentQuestions() {
+        return (this.activeSession != null) ? this.activeSession.getQuestions() : List.of();
     }
 
-    public void answerQuestion(String qId, String answer){
-        currentAttempt.answerQuestion(qId, answer);
+    public void registerResponse(String questionId, String selectedOption) {
+        if (activeSession != null) {
+            activeSession.answerQuestion(questionId, selectedOption);
+        }
     }
 
-    public int finishExam(){
-        return currentAttempt.calculateScore();
+    public int closeAndGetGrade() {
+        int finalScore = this.activeSession.calculateScore();
+        // Opcional: podrías guardar el estado final aquí para diferenciarlo más
+        _attemptData.save(this.activeSession); 
+        return finalScore;
     }
 }
