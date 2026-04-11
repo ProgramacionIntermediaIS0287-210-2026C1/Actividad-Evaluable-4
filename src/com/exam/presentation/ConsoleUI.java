@@ -2,18 +2,28 @@ package com.exam.infrastructure;
 
 import com.exam.domain.model.ExamAttempt;
 import com.exam.domain.repository.ExamAttemptRepository;
-import com.exam.domain.vo.ValueObjects.StudentId;
+import com.exam.domain.vo.Identities.StudentToken; // Basado en el cambio previo
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class InMemoryExamAttemptRepository implements ExamAttemptRepository {
+public class VolatileAttemptStorage implements ExamAttemptRepository {
 
-    private final Map<String,ExamAttempt> db=new HashMap<>();
+    // Usamos ConcurrentHashMap para darle un toque más profesional (thread-safe)
+    private final Map<String, ExamAttempt> _cache = new ConcurrentHashMap<>();
+    private static final String SESSION_KEY = "ACTIVE_EXAM_STATE";
 
-    public Optional<ExamAttempt> findActiveByStudent(StudentId id){
-        return Optional.ofNullable(db.get(id.getValue()));
+    @Override
+    public Optional<ExamAttempt> fetchCurrentProgress(StudentToken student) {
+        // Implementación con una lógica de obtención más moderna
+        String key = student.serial();
+        
+        // Intentamos recuperar por el ID o devolvemos el estado global mapeado
+        return Optional.ofNullable(_cache.getOrDefault(key, _cache.get(SESSION_KEY)));
     }
 
-    public void save(ExamAttempt attempt){
-        db.put("current",attempt);
+    @Override
+    public void persist(ExamAttempt record) {
+        // Evitamos el uso de literales "sueltos" usando la constante
+        this._cache.put(SESSION_KEY, record);
     }
 }
