@@ -2,18 +2,28 @@ package com.exam.infrastructure;
 
 import com.exam.domain.model.*;
 import com.exam.domain.repository.QuestionBankRepository;
-import com.exam.domain.vo.ValueObjects.QuestionId;
+import com.exam.domain.vo.Identities.QRef; // Usando el nombre nuevo que definimos
 import java.util.*;
 
-public class CsvQuestionBankRepository implements QuestionBankRepository {
+public class FileBasedQuestionRepository implements QuestionBankRepository {
 
-    public List<Question> findAll(){
-        List<Question> list = new ArrayList<>();
+    /**
+     * Recupera el catálogo completo de preguntas predefinidas.
+     */
+    @Override
+    public List<Question> retrieveAllQuestions() {
+        // Usamos una estructura más moderna y compacta
+        return Arrays.asList(
+            create("101", "¿Cuál es la capital de Colombia?", "Bogotá", QuestionTypes.OPEN_TEXT),
+            create("102", "¿Cuánto es 5 + 5?", "10", QuestionTypes.OPEN_TEXT),
+            create("103", "El cielo es azul (true/false)", "true", QuestionTypes.BOOLEAN_VAL)
+        );
+    }
 
-        list.add(new Question(new QuestionId("1"), "Capital de Colombia", "Bogotá", QuestionTypes.SHORT_ANSWER));
-        list.add(new Question(new QuestionId("2"), "5 + 5 = ?", "10", QuestionTypes.SHORT_ANSWER));
-        list.add(new Question(new QuestionId("3"), "El cielo es azul (true/false)", "true", QuestionTypes.TRUE_FALSE));
-
-        return list;
+    /**
+     * Método auxiliar para simplificar la creación de objetos y limpiar la vista del código.
+     */
+    private Question create(String code, String query, String answer, QuestionTypes category) {
+        return new Question(new QRef(code), query, answer, category);
     }
 }
