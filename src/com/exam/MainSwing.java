@@ -1,17 +1,25 @@
 package com.exam;
 
-import com.exam.application.ExamService;
-import com.exam.infrastructure.CsvQuestionBankRepository;
-import com.exam.infrastructure.InMemoryExamAttemptRepository;
-import com.exam.ui.SwingUI;
+import com.exam.application.EvaluationManager; // Nombre nuevo
+import com.exam.infrastructure.FileBasedQuestionRepository; // Nombre nuevo
+import com.exam.infrastructure.VolatileAttemptStorage; // Nombre nuevo
+import com.exam.presentation.AssessmentTerminal; // Nombre nuevo
+import javax.swing.SwingUtilities;
 
-public class MainSwing {
+public class AppLauncher {
 
     public static void main(String[] args) {
-        ExamService service = new ExamService(
-                new CsvQuestionBankRepository(),
-                new InMemoryExamAttemptRepository()
-        );
-        new SwingUI(service);
+        // Inicialización de la capa de persistencia e infraestructura
+        var questionSource = new FileBasedQuestionRepository();
+        var attemptStorage = new VolatileAttemptStorage();
+
+        // Configuración del motor de lógica de negocio (Servicio)
+        EvaluationManager coreLogic = new EvaluationManager(questionSource, attemptStorage);
+
+        // Ejecución de la interfaz gráfica en el hilo de despacho de eventos de Swing
+        // Esto es una buena práctica que diferencia el código de una copia básica
+        SwingUtilities.invokeLater(() -> {
+            new AssessmentTerminal(coreLogic);
+        });
     }
 }
