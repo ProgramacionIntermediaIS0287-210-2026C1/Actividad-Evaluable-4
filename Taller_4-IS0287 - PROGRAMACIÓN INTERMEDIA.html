@@ -251,6 +251,13 @@ classDiagram
             +displayFormat() void
         }
 
+        class AsociationQuestion {
+            -List~String~ option1
+            -List~String~ option2
+            +isCorrect(AnswerText studentAnswer) boolean
+            +displayFormat() void
+        }
+
         class ExamAttempt {
             -StudentId studentId
             -List~Question~ questions
@@ -339,6 +346,8 @@ classDiagram
     Question <|-- TrueFalseQuestion
     Question <|-- FillBlankQuestion
     Question <|-- MultipleChoiceQuestion
+    Question <|-- AsociationQuestion
+
 
     ExamAttempt "1" *-- "*" Question : contiene
     ExamAttempt "1" *-- "1" StudentId : pertenece_a
