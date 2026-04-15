@@ -2,28 +2,23 @@ package com.exam.domain.service;
 
 import com.exam.domain.model.ExamAttempt;
 import com.exam.domain.repository.Repositories.ExamAttemptRepository;
+import com.exam.domain.vo.ValueObjects.StudentId;
+import java.util.Optional;
 
+/**
+ * Domain Service responsable de la regla de negocio: un solo intento activo.
+ */
 public class AttemptManager {
+    private final ExamAttemptRepository repository;
 
-    private ExamAttemptRepository repo;
-
-    public AttemptManager(ExamAttemptRepository repo) {
-        this.repo = repo;
+    public AttemptManager(ExamAttemptRepository repository) {
+        this.repository = repository;
     }
 
-    public ExamAttempt iniciarIntento(String studentId) {
-
-        if (repo.existsActiveAttempt(studentId)) {
-            throw new RuntimeException("Ya tiene intento activo");
+    public void verificarIntentoActivo(StudentId studentId) {
+        Optional<ExamAttempt> active = repository.findActiveByStudent(studentId);
+        if (active.isPresent()) {
+            throw new IllegalStateException("El estudiante ya posee un intento activo en curso.");
         }
-
-        ExamAttempt intento = new ExamAttempt();
-        repo.save(studentId, intento);
-
-        return intento;
-    }
-
-    public void finalizarIntento(String studentId) {
-        repo.remove(studentId);
     }
 }

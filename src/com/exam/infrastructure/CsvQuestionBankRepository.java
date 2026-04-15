@@ -1,44 +1,70 @@
 package com.exam.infrastructure;
 
-import com.exam.domain.model.*;
-import com.exam.domain.model.QuestionTypes.*;
+import com.exam.domain.model.Question;
+import com.exam.domain.model.QuestionTypes;
+import com.exam.domain.repository.Repositories.QuestionBankRepository;
+import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.QuestionId;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import java.io.*;
-import java.util.*;
+/**
+ * Adaptador de infraestructura para cargar las preguntas desde un archivo CSV.
+ */
+public class CsvQuestionBankRepository implements QuestionBankRepository {
+  private final String filePath;
 
-public class CsvQuestionBankRepository {
+  public CsvQuestionBankRepository(String filePath) {
+    this.filePath = filePath;
+  }
 
-    public List<Question> load(String path) throws Exception {
+  @Override
+  public List<Question> findAll() {
+    List<Question> questions = new ArrayList<>();
 
-        List<Question> list = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
+    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      int lineNum = 0;
+      while ((line = br.readLine()) != null) {
+        lineNum++;
+        if (lineNum == 1)
+          continue; // Saltar cabecera
 
-            while ((line = br.readLine()) != null) {
-
-                String[] p = line.split(";");
-
-                switch (p[0]) {
-
-                    case "UNICA":
-                        list.add(new UniqueChoice(
-                                UUID.randomUUID().toString(),
-                                p[1],
-                                Arrays.asList(p[2].split(",")),
-                                p[3]
-                        ));
-                        break;
-
-                    case "VF":
-                        list.add(new TrueFalse(
-                                UUID.randomUUID().toString(),
-                                p[1],
-                                p[2].equals("V")
-                        ));
-                        break;
-                }
-            }
+        try {
+          questions.add(parseQuestion(line, lineNum));
+        } catch (Exception e) {
+          System.err.println("Advertencia - Línea " + lineNum + " omitida: " + e.getMessage());
         }
-        return list;
+      }
+    } catch (IOException e) {
+      System.err.println("Error crítico de lectura del CSV: " + e.getMessage());
     }
+
+    return questions;
+  }
+
+  private Question parseQuestion(String line, int idStr) {
+    String[] parts = line.split(";");
+    if (parts.length < 4 && !parts[0].equals("TF") && !parts[0].equals("FB")) {
+      throw new IllegalArgumentException("Datos insuficientes en la fila.");
+    }
+
+    QuestionId id = new QuestionId(String.valueOf(idStr));
+    String type = parts[0];
+    String text = parts[1];
+    String options = parts.length > 2 ? parts[2] : "";
+    AnswerText correct = new AnswerText(parts.length > 3 ? parts[3] : "");
+
+    return switch (type) {
+      case "SC" -> new QuestionTypes.SingleChoiceQuestion(id, text, Arrays.asList(options.split(",")), correct);
+      case "MC" -> new QuestionTypes.MultipleChoiceQuestion(id, text, Arrays.asList(options.split(",")), correct);
+      case "TF" -> new QuestionTypes.TrueFalseQuestion(id, text, correct);
+      case "FB" -> new QuestionTypes.FillBlankQuestion(id, text, correct);
+      default -> throw new IllegalArgumentException("Tipo de pregunta desconocido: " + type);
+    };
+  }
 }

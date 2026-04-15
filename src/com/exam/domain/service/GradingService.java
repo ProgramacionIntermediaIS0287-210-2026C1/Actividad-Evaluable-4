@@ -1,23 +1,27 @@
 package com.exam.domain.service;
 
-import com.exam.application.dto.ResultDTO;
-import com.exam.domain.model.Question;
 import com.exam.domain.model.ExamAttempt;
-
+import com.exam.domain.model.Question;
+import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.Calificacion;
 import java.util.List;
 
+/**
+ * Servicio de dominio que implementa la lógica de calificación de un examen.
+ * Centraliza la evaluación para no sobrecargar el Agregado ExamAttempt (DDD).
+ */
 public class GradingService {
-
-    public ResultDTO calificar(List<Question> preguntas, ExamAttempt intento) {
-        int score = 0;
-
-        for (Question q : preguntas) {
-            String respuesta = intento.getRespuestas().get(q.getId());
-            if (respuesta != null && q.esCorrecta(respuesta)) {
-                score++;
-            }
-        }
-
-        return new ResultDTO(score, preguntas.size());
+  public Calificacion calificar(ExamAttempt attempt) {
+    List<Question> questions = attempt.getQuestions();
+    int correctCount = 0;
+    
+    for (Question question : questions) {
+      AnswerText studentAnswer = attempt.getAnswers().get(question.getId());
+      if (studentAnswer != null && question.isCorrect(studentAnswer)) {
+        correctCount++;
+      }
     }
+    
+    return new Calificacion(correctCount, questions.size());
+  }
 }
