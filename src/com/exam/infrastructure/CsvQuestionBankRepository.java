@@ -1,29 +1,70 @@
 package com.exam.infrastructure;
 
-import com.exam.domain.model.*;
-import com.exam.domain.repository.QuestionBankRepository;
-import com.exam.domain.vo.Identities.QRef; // Usando el nombre nuevo que definimos
-import java.util.*;
+import com.exam.domain.model.Question;
+import com.exam.domain.model.QuestionTypes;
+import com.exam.domain.repository.Repositories.QuestionBankRepository;
+import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.QuestionId;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class FileBasedQuestionRepository implements QuestionBankRepository {
+/**
+ * Adaptador de infraestructura para cargar las preguntas desde un archivo CSV.
+ */
+public class CsvQuestionBankRepository implements QuestionBankRepository {
+  private final String filePath;
 
-    /**
-     * Recupera el catálogo completo de preguntas predefinidas.
-     */
-    @Override
-    public List<Question> retrieveAllQuestions() {
-        // Usamos una estructura más moderna y compacta
-        return Arrays.asList(
-            create("101", "¿Cuál es la capital de Colombia?", "Bogotá", QuestionTypes.OPEN_TEXT),
-            create("102", "¿Cuánto es 5 + 5?", "10", QuestionTypes.OPEN_TEXT),
-            create("103", "El cielo es azul (true/false)", "true", QuestionTypes.BOOLEAN_VAL)
-        );
+  public CsvQuestionBankRepository(String filePath) {
+    this.filePath = filePath;
+  }
+
+  @Override
+  public List<Question> findAll() {
+    List<Question> questions = new ArrayList<>();
+
+    try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+      String line;
+      int lineNum = 0;
+      while ((line = br.readLine()) != null) {
+        lineNum++;
+        if (lineNum == 1)
+          continue; // Saltar cabecera
+
+        try {
+          questions.add(parseQuestion(line, lineNum));
+        } catch (Exception e) {
+          System.err.println("Advertencia - Línea " + lineNum + " omitida: " + e.getMessage());
+        }
+      }
+    } catch (IOException e) {
+      System.err.println("Error crítico de lectura del CSV: " + e.getMessage());
     }
 
-    /**
-     * Método auxiliar para simplificar la creación de objetos y limpiar la vista del código.
-     */
-    private Question create(String code, String query, String answer, QuestionTypes category) {
-        return new Question(new QRef(code), query, answer, category);
+    return questions;
+  }
+
+  private Question parseQuestion(String line, int idStr) {
+    String[] parts = line.split(";");
+    if (parts.length < 4 && !parts[0].equals("TF") && !parts[0].equals("FB")) {
+      throw new IllegalArgumentException("Datos insuficientes en la fila.");
     }
+
+    QuestionId id = new QuestionId(String.valueOf(idStr));
+    String type = parts[0];
+    String text = parts[1];
+    String options = parts.length > 2 ? parts[2] : "";
+    AnswerText correct = new AnswerText(parts.length > 3 ? parts[3] : "");
+
+    return switch (type) {
+      case "SC" -> new QuestionTypes.SingleChoiceQuestion(id, text, Arrays.asList(options.split(",")), correct);
+      case "MC" -> new QuestionTypes.MultipleChoiceQuestion(id, text, Arrays.asList(options.split(",")), correct);
+      case "TF" -> new QuestionTypes.TrueFalseQuestion(id, text, correct);
+      case "FB" -> new QuestionTypes.FillBlankQuestion(id, text, correct);
+      default -> throw new IllegalArgumentException("Tipo de pregunta desconocido: " + type);
+    };
+  }
 }

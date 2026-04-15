@@ -1,39 +1,58 @@
 package com.exam.domain.model;
 
+import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.Calificacion;
+import com.exam.domain.vo.ValueObjects.QuestionId;
 import com.exam.domain.vo.ValueObjects.StudentId;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+/**
+ * Aggregate Root que garantiza la consistencia de un intento de examen.
+ */
 public class ExamAttempt {
+  private final StudentId studentId;
+  private final List<Question> questions;
+  private final Map<QuestionId, AnswerText> answers;
+  private boolean isFinished;
+  private Calificacion result;
 
-    private final StudentId _student;
-    private final List<Question> _testQuestions;
-    // Inicialización directa para cambiar la estructura del constructor
-    private final Map<String, String> _responses = new LinkedHashMap<>();
+  public ExamAttempt(StudentId studentId, List<Question> questions) {
+    this.studentId = studentId;
+    this.questions = questions;
+    this.answers = new HashMap<>();
+    this.isFinished = false;
+  }
 
-    public ExamAttempt(StudentId ownerId, List<Question> examContent) {
-        this._student = ownerId;
-        this._testQuestions = List.copyOf(examContent); // Inmutabilidad defensiva
+  public void responder(QuestionId qId, AnswerText answer) {
+    if (!isFinished) {
+      answers.put(qId, answer);
     }
+  }
 
-    public void registerAnswer(String qId, String userOption) {
-        // Usamos putIfAbsent o simplemente cambiamos el nombre del método
-        this._responses.put(qId, userOption);
-    }
+  public void finalizar(Calificacion calificacion) {
+    this.isFinished = true;
+    this.result = calificacion;
+  }
 
-    public int calculateScore() {
-        // Uso de Java Streams para que la lógica se vea totalmente distinta al 'for' original
-        return (int) _testQuestions.stream()
-                .filter(q -> isResponseCorrect(q))
-                .count();
-    }
+  public boolean estaFinalizado() {
+    return isFinished;
+  }
 
-    private boolean isResponseCorrect(Question q) {
-        String userAns = _responses.get(q.getId().getValue());
-        return userAns != null && q.isCorrect(userAns);
-    }
+  public StudentId getStudentId() {
+    return studentId;
+  }
 
-    public List<Question> getExamPaper() {
-        return Collections.unmodifiableList(_testQuestions);
-    }
+  public List<Question> getQuestions() {
+    return questions;
+  }
+
+  public Map<QuestionId, AnswerText> getAnswers() {
+    return answers;
+  }
+
+  public Calificacion getResult() {
+    return result;
+  }
 }
