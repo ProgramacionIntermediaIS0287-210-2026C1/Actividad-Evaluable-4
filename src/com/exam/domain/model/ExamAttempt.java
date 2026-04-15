@@ -1,45 +1,58 @@
 package com.exam.domain.model;
 
 import com.exam.domain.vo.ValueObjects.AnswerText;
+import com.exam.domain.vo.ValueObjects.Calificacion;
 import com.exam.domain.vo.ValueObjects.QuestionId;
 import com.exam.domain.vo.ValueObjects.StudentId;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Aggregate Root que garantiza la consistencia de un intento de examen.
+ */
 public class ExamAttempt {
+  private final StudentId studentId;
+  private final List<Question> questions;
+  private final Map<QuestionId, AnswerText> answers;
+  private boolean isFinished;
+  private Calificacion result;
 
-    private final studentId studentId;
-    private final Map<QuestionId, AnswerText> ansMap;
-    private boolean finished;
+  public ExamAttempt(StudentId studentId, List<Question> questions) {
+    this.studentId = studentId;
+    this.questions = questions;
+    this.answers = new HashMap<>();
+    this.isFinished = false;
+  }
 
-    public ExamAttempt(StudentId studentId){
-        this.studentId = studentId;
-        this.ansMap = new HashMap<>();
-        this.finished = false;
+  public void responder(QuestionId qId, AnswerText answer) {
+    if (!isFinished) {
+      answers.put(qId, answer);
     }
+  }
 
-    public void answerQuestion(QuestionId questionId, AnswerText answer){
-        if (finished) {
-            throw new IllegalStateException("El intento ya esta finalixado ");
-        }
-        answer.putt(questionId, answer);
-    }
+  public void finalizar(Calificacion calificacion) {
+    this.isFinished = true;
+    this.result = calificacion;
+  }
 
-    public void finish(){
-        this.finished = true;
-    }
+  public boolean estaFinalizado() {
+    return isFinished;
+  }
 
-    public boolean isFinished(){
-        return finished;
-    }
+  public StudentId getStudentId() {
+    return studentId;
+  }
 
-    public Map<QuestionId, AnswerText> getAnswers(){
-        return answers;
-    }
+  public List<Question> getQuestions() {
+    return questions;
+  }
 
-    public StudentId getStudentId(){
-        return studentId;
-    }
+  public Map<QuestionId, AnswerText> getAnswers() {
+    return answers;
+  }
 
+  public Calificacion getResult() {
+    return result;
+  }
 }
