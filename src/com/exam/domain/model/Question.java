@@ -1,26 +1,33 @@
 package com.exam.domain.model;
 
+import com.exam.domain.vo.ValueObjects.AnswerText;
 import com.exam.domain.vo.ValueObjects.QuestionId;
 
-public class Question {
+/**
+ * Entidad abstracta que representa el concepto de Pregunta en el dominio (OCP).
+ */
+public abstract class Question {
+  protected final QuestionId id;
+  protected final String text;
+  protected final AnswerText correctAnswer;
 
-    private final QuestionId id;
-    private final String text;
-    private final String correctAnswer;
-    private final QuestionTypes type;
+  public Question(QuestionId id, String text, AnswerText correctAnswer) {
+    this.id = id;
+    this.text = text;
+    this.correctAnswer = correctAnswer;
+  }
 
-    public Question(QuestionId id, String text, String correctAnswer, QuestionTypes type) {
-        this.id = id;
-        this.text = text;
-        this.correctAnswer = correctAnswer;
-        this.type = type;
-    }
+  public QuestionId getId() {
+    return id;
+  }
 
-    public QuestionId getId(){ return id; }
-    public String getText(){ return text; }
-    public QuestionTypes getType(){ return type; }
+  public String getText() {
+    return text;
+  }
 
-    public boolean isCorrect(String answer){
-        return correctAnswer.equalsIgnoreCase(answer.trim());
-    }
+  // Polimorfismo para evaluar respuestas según el tipo de pregunta
+  public abstract boolean isCorrect(AnswerText studentAnswer);
+
+  // Polimorfismo para la presentación visual
+  public abstract void displayFormat();
 }

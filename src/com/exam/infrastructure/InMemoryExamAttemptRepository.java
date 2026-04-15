@@ -1,19 +1,29 @@
 package com.exam.infrastructure;
 
 import com.exam.domain.model.ExamAttempt;
-import com.exam.domain.repository.ExamAttemptRepository;
+import com.exam.domain.repository.Repositories.ExamAttemptRepository;
 import com.exam.domain.vo.ValueObjects.StudentId;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
+/**
+ * Adaptador de infraestructura en memoria para la gestión de intentos (Fase 3).
+ */
 public class InMemoryExamAttemptRepository implements ExamAttemptRepository {
+  private final Map<StudentId, ExamAttempt> db = new HashMap<>();
 
-    private final Map<String,ExamAttempt> db=new HashMap<>();
-
-    public Optional<ExamAttempt> findActiveByStudent(StudentId id){
-        return Optional.ofNullable(db.get(id.getValue()));
+  @Override
+  public Optional<ExamAttempt> findActiveByStudent(StudentId studentId) {
+    ExamAttempt attempt = db.get(studentId);
+    if (attempt != null && !attempt.estaFinalizado()) {
+      return Optional.of(attempt);
     }
+    return Optional.empty();
+  }
 
-    public void save(ExamAttempt attempt){
-        db.put("current",attempt);
-    }
+  @Override
+  public void save(ExamAttempt attempt) {
+    db.put(attempt.getStudentId(), attempt);
+  }
 }

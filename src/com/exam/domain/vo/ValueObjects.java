@@ -1,16 +1,25 @@
 package com.exam.domain.vo;
 
+/**
+ * Agrupa los Value Objects (Objetos de Valor) del dominio.
+ * Utiliza records de Java para garantizar la inmutabilidad (Evans, 2003).
+ */
 public class ValueObjects {
 
-    public static class QuestionId {
-        private final String value;
-        public QuestionId(String value){ this.value=value; }
-        public String getValue(){ return value; }
+    public record StudentId(String value) {
+        public StudentId {
+            if (value == null || value.isBlank()) {
+                throw new IllegalArgumentException("El ID del estudiante no puede estar vacío.");
+            }
+        }
     }
 
-    public static class StudentId {
-        private final String value;
-        public StudentId(String value){ this.value=value; }
-        public String getValue(){ return value; }
+    public record QuestionId(String value) {
+    }
+
+    public record AnswerText(String value) {
+    }
+
+    public record Calificacion(int puntaje, int total) {
     }
 }
